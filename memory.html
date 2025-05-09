@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Memory Cards Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      background: linear-gradient(to right, #e0c3fc, #8ec5fc);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+    #game {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      gap: 15px;
+      justify-content: center;
+    }
+    .card {
+      width: 100px;
+      height: 100px;
+      font-size: 2rem;
+      background-color: #ffffff;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .flipped, .matched {
+      color: #333;
+      background-color: #d1eaff;
+    }
+    .matched {
+      background-color: #4caf50;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧠 Memory Cards Game</h1>
+  <div id="game"></div>
+
+  <script>
+    const emojis = ['🍎', '🍌', '🍓', '🍇', '🍍', '🍑', '🥝', '🍒'];
+    let cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+    let first = null, second = null, lock = false;
+
+    const game = document.getElementById('game');
+    cards.forEach((emoji, i) => {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.dataset.emoji = emoji;
+      div.dataset.index = i;
+      div.addEventListener('click', () => {
+        if (lock || div.classList.contains('flipped') || div.classList.contains('matched')) return;
+        div.textContent = emoji;
+        div.classList.add('flipped');
+
+        if (!first) {
+          first = div;
+        } else {
+          second = div;
+          lock = true;
+          setTimeout(() => {
+            if (first.dataset.emoji === second.dataset.emoji) {
+              first.classList.add('matched');
+              second.classList.add('matched');
+            } else {
+              first.textContent = '';
+              second.textContent = '';
+              first.classList.remove('flipped');
+              second.classList.remove('flipped');
+            }
+            first = second = null;
+            lock = false;
+          }, 700);
+        }
+      });
+      game.appendChild(div);
+    });
+  </script>
+</body>
+</html>
